@@ -152,7 +152,7 @@ const FormBuilder = () => {
 
       <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <SortableContext items={fields} strategy={verticalListSortingStrategy}>
-          <div className="space-y-4">
+          <div className="space-y-4 grid grid-cols-12 gap-2">
             {fields.map((field) => (
               <FormField key={field.id} field={field} />
             ))}

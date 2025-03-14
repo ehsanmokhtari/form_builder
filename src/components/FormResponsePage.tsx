@@ -115,8 +115,8 @@ const FormResponsePage = () => {
                     return (
                       <div key={field.id} className={`${widthClass}`}>
                         {field.type === 'question' && (
-                          <div className="space-y-3">
-                            <label className="block text-sm font-medium text-gray-700">
+                          <div className={`space-y-3 ${field.answerPlacement === 'front' ? 'flex items-center gap-4' : ''}`}>
+                            <label className="block text-sm font-medium text-gray-700 text-nowrap">
                               {field.content} {field.required && <span className="text-red-500">*</span>}
                             </label>
                             {field.questionType === 'descriptive' ? (
@@ -136,7 +136,7 @@ const FormResponsePage = () => {
                                 />
                               )
                             ) : (
-                              <div className="space-y-2">
+                              <div className={`gap-4 ${field.optionLayout === 'column' ? 'flex flex-col' : 'flex flex-row'}`}>
                                 {field.options?.map((option, index) => (
                                   <div key={index} className="flex items-center">
                                     <input

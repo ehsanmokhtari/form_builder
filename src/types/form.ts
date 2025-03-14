@@ -8,6 +8,8 @@ export interface FormField {
   width?: number; // Accepts values from 1 to 12
   order: number;
   is_multiline?: boolean;
+  answerPlacement?: 'front' | 'below';
+  optionLayout?: 'row' | 'column';
 }
 
 export interface Form {

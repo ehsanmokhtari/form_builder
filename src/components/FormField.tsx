@@ -23,7 +23,7 @@ const FormField: React.FC<FormFieldProps> = ({ field }) => {
     <div
       ref={setNodeRef}
       style={style}
-      className="bg-white rounded-lg shadow p-4 border border-gray-200"
+      className={`bg-white rounded-lg shadow  p-4 border border-gray-200 col-span-${field.width}`}
     >
       <div className="flex items-start gap-4">
         <button
@@ -46,16 +46,6 @@ const FormField: React.FC<FormFieldProps> = ({ field }) => {
             />
           ) : (
             <div className="space-y-4">
-              <input
-                type="text"
-                value={field.content}
-                onChange={(e) =>
-                  updateField(field.id, { content: e.target.value })
-                }
-                className="w-full p-2 border border-gray-300 rounded-md"
-                placeholder="Enter question..."
-              />
-
               <div className="flex items-center gap-4">
                 <select
                   value={field.questionType}
@@ -97,35 +87,90 @@ const FormField: React.FC<FormFieldProps> = ({ field }) => {
                 </label>
               </div>
 
+              <div className="flex items-center gap-4 mt-2">
+                <label className="flex items-center gap-2">
+                  Answer Placement:
+                  <select
+                    value={field.answerPlacement}
+                    onChange={(e) =>
+                      updateField(field.id, {
+                        answerPlacement: e.target.value as "front" | "below",
+                      })
+                    }
+                    className="p-2 border border-gray-300 rounded-md"
+                  >
+                    <option value="front">In Front</option>
+                    <option value="below">Below</option>
+                  </select>
+                </label>
+
+                {(field.questionType === "single" ||
+                  field.questionType === "multiple") && (
+                  <label className="flex items-center gap-2">
+                    Option Layout:
+                    <select
+                      value={field.optionLayout}
+                      onChange={(e) =>
+                        updateField(field.id, {
+                          optionLayout: e.target.value as "row" | "column",
+                        })
+                      }
+                      className="p-2 border border-gray-300 rounded-md"
+                    >
+                      <option value="row">Row</option>
+                      <option value="column">Column</option>
+                    </select>
+                  </label>
+                )}
+              </div>
+
+              <input
+                type="text"
+                value={field.content}
+                onChange={(e) =>
+                  updateField(field.id, { content: e.target.value })
+                }
+                className="p-2 border w-fit border-gray-300 rounded-md"
+                placeholder="Enter question..."
+              />
+
               {(field.questionType === "single" ||
                 field.questionType === "multiple") && (
-                <div className="space-y-2">
-                  {field.options?.map((option, index) => (
-                    <div key={index} className="flex items-center gap-2">
-                      <input
-                        type="text"
-                        value={option}
-                        onChange={(e) => {
-                          const newOptions = [...(field.options || [])];
-                          newOptions[index] = e.target.value;
-                          updateField(field.id, { options: newOptions });
-                        }}
-                        className="flex-1 p-2 border border-gray-300 rounded-md"
-                        placeholder={`Option ${index + 1}`}
-                      />
-                      <button
-                        onClick={() => {
-                          const newOptions = field.options?.filter(
-                            (_, i) => i !== index
-                          );
-                          updateField(field.id, { options: newOptions });
-                        }}
-                        className="text-red-500 hover:text-red-700"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  ))}
+                <>
+                  <div
+                    className={`gap-2 ${
+                      field.optionLayout === "column"
+                        ? "flex flex-col"
+                        : "flex flex-row"
+                    }`}
+                  >
+                    {field.options?.map((option, index) => (
+                      <div key={index} className="flex items-center gap-2">
+                        <input
+                          type="text"
+                          value={option}
+                          onChange={(e) => {
+                            const newOptions = [...(field.options || [])];
+                            newOptions[index] = e.target.value;
+                            updateField(field.id, { options: newOptions });
+                          }}
+                          className="flex p-2 border border-gray-300 rounded-md"
+                          placeholder={`Option ${index + 1}`}
+                        />
+                        <button
+                          onClick={() => {
+                            const newOptions = field.options?.filter(
+                              (_, i) => i !== index
+                            );
+                            updateField(field.id, { options: newOptions });
+                          }}
+                          className="text-red-500 hover:text-red-700"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
                   <button
                     onClick={() => {
                       const newOptions = [...(field.options || []), ""];
@@ -135,7 +180,7 @@ const FormField: React.FC<FormFieldProps> = ({ field }) => {
                   >
                     + Add Option
                   </button>
-                </div>
+                </>
               )}
             </div>
           )}
