@@ -1,25 +1,27 @@
-import React, { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabase';
-import type { Form, FormField } from '../types/form';
+import { useState, useEffect } from "react";
+import { supabase } from "../lib/supabase";
+import type { Form, FormField } from "../types/form";
 
 const FormResponsePage = () => {
   const [forms, setForms] = useState<Form[]>([]);
   const [selectedForm, setSelectedForm] = useState<Form | null>(null);
-  const [responses, setResponses] = useState<Record<string, string | string[]>>({});
+  const [responses, setResponses] = useState<Record<string, string | string[]>>(
+    {}
+  );
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const loadForms = async () => {
       try {
         const { data, error } = await supabase
-          .from('forms')
-          .select('*')
-          .order('created_at', { ascending: false });
+          .from("forms")
+          .select("*")
+          .order("created_at", { ascending: false });
 
         if (error) throw error;
         setForms(data || []);
       } catch (error) {
-        console.error('Error loading forms:', error);
+        console.error("Error loading forms:", error);
       } finally {
         setLoading(false);
       }
@@ -29,13 +31,13 @@ const FormResponsePage = () => {
   }, []);
 
   const handleFormSelect = (formId: string) => {
-    const form = forms.find(f => f.id === formId);
+    const form = forms.find((f) => f.id === formId);
     setSelectedForm(form || null);
     setResponses({});
   };
 
   const handleResponseChange = (fieldId: string, value: string | string[]) => {
-    setResponses(prev => ({ ...prev, [fieldId]: value }));
+    setResponses((prev) => ({ ...prev, [fieldId]: value }));
   };
 
   const handleSubmit = async () => {
@@ -43,29 +45,30 @@ const FormResponsePage = () => {
 
     // Check for required fields
     const missingFields = selectedForm.fields
-      .filter(field => field.required && (
-        !responses[field.id] || 
-        (Array.isArray(responses[field.id]) && responses[field.id].length === 0)
-      ))
-      .map(field => field.content);
+      .filter(
+        (field) =>
+          field.required &&
+          (!responses[field.id] ||
+            (Array.isArray(responses[field.id]) &&
+              responses[field.id].length === 0))
+      )
+      .map((field) => field.content);
 
     if (missingFields.length > 0) {
-      alert(`Please fill out the required fields: ${missingFields.join(', ')}`);
+      alert(`Please fill out the required fields: ${missingFields.join(", ")}`);
       return;
     }
 
     try {
-      const { error } = await supabase
-        .from('form_responses')
-        .insert({
-          form_id: selectedForm.id,
-          responses,
-        });
+      const { error } = await supabase.from("form_responses").insert({
+        form_id: selectedForm.id,
+        responses,
+      });
 
       if (error) throw error;
-      alert('Response submitted successfully!');
+      alert("Response submitted successfully!");
     } catch (error) {
-      console.error('Error submitting response:', error);
+      console.error("Error submitting response:", error);
     }
   };
 
@@ -90,12 +93,12 @@ const FormResponsePage = () => {
         </div>
 
         <div className="mb-8">
-          <select 
+          <select
             onChange={(e) => handleFormSelect(e.target.value)}
             className="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-purple-500 focus:border-purple-500 bg-white"
           >
             <option value="">Select a form</option>
-            {forms.map(form => (
+            {forms.map((form) => (
               <option key={form.id} value={form.id}>
                 {form.title}
               </option>
@@ -106,7 +109,9 @@ const FormResponsePage = () => {
         {selectedForm && (
           <div className="bg-white rounded-xl shadow-xl overflow-hidden">
             <div className="px-6 py-8">
-              <h3 className="text-2xl font-bold text-gray-900 mb-6">{selectedForm.title}</h3>
+              <h3 className="text-2xl font-bold text-gray-900 mb-6">
+                {selectedForm.title}
+              </h3>
               <div className="grid grid-cols-12 gap-6">
                 {selectedForm.fields
                   .sort((a, b) => a.order - b.order)
@@ -114,49 +119,97 @@ const FormResponsePage = () => {
                     const widthClass = `col-span-${field.width || 12}`;
                     return (
                       <div key={field.id} className={`${widthClass}`}>
-                        {field.type === 'question' && (
-                          <div className={`space-y-3 ${field.answerPlacement === 'front' ? 'flex items-center gap-4' : ''}`}>
+                        {field.type === "text" ? (
+                          <div className="bg-purple-50 rounded-lg p-4">
+                            <p className="text-gray-700 text-wrap whitespace-break-spaces">
+                              {field.content}
+                            </p>
+                          </div>
+                        ) : (
+                          <div
+                            className={`space-y-3 ${
+                              field.answerPlacement === "front"
+                                ? "flex items-center gap-4"
+                                : ""
+                            }`}
+                          >
                             <label className="block text-sm font-medium text-gray-700 text-nowrap">
-                              {field.content} {field.required && <span className="text-red-500">*</span>}
+                              {field.content}{" "}
+                              {field.required && (
+                                <span className="text-red-500">*</span>
+                              )}
                             </label>
-                            {field.questionType === 'descriptive' ? (
+                            {field.questionType === "descriptive" ? (
                               field.is_multiline ? (
                                 <textarea
                                   className="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-purple-500 focus:border-purple-500 bg-white"
                                   rows={4}
-                                  onChange={(e) => handleResponseChange(field.id, e.target.value)}
+                                  onChange={(e) =>
+                                    handleResponseChange(
+                                      field.id,
+                                      e.target.value
+                                    )
+                                  }
                                   placeholder="Enter your response..."
                                 />
                               ) : (
                                 <input
                                   type="text"
                                   className="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-purple-500 focus:border-purple-500 bg-white"
-                                  onChange={(e) => handleResponseChange(field.id, e.target.value)}
+                                  onChange={(e) =>
+                                    handleResponseChange(
+                                      field.id,
+                                      e.target.value
+                                    )
+                                  }
                                   placeholder="Enter your response..."
                                 />
                               )
                             ) : (
-                              <div className={`gap-4 ${field.optionLayout === 'column' ? 'flex flex-col' : 'flex flex-row'}`}>
+                              <div
+                                className={`gap-4 ${
+                                  field.optionLayout === "column"
+                                    ? "flex flex-col flex-wrap"
+                                    : "flex flex-row flex-wrap"
+                                }`}
+                              >
                                 {field.options?.map((option, index) => (
-                                  <div key={index} className="flex items-center">
+                                  <div
+                                    key={index}
+                                    className="flex items-center"
+                                  >
                                     <input
-                                      type={field.questionType === 'single' ? 'radio' : 'checkbox'}
+                                      type={
+                                        field.questionType === "single"
+                                          ? "radio"
+                                          : "checkbox"
+                                      }
                                       name={field.id}
                                       value={option}
                                       className={`h-4 w-4 ${
-                                        field.questionType === 'single' 
-                                          ? 'text-purple-600 focus:ring-purple-500' 
-                                          : 'rounded text-purple-600 focus:ring-purple-500'
+                                        field.questionType === "single"
+                                          ? "text-purple-600 focus:ring-purple-500"
+                                          : "rounded text-purple-600 focus:ring-purple-500"
                                       }`}
                                       onChange={(e) => {
-                                        if (field.questionType === 'single') {
-                                          handleResponseChange(field.id, e.target.value);
+                                        if (field.questionType === "single") {
+                                          handleResponseChange(
+                                            field.id,
+                                            e.target.value
+                                          );
                                         } else {
-                                          const currentResponses = responses[field.id] as string[] || [];
+                                          const currentResponses =
+                                            (responses[field.id] as string[]) ||
+                                            [];
                                           const newResponses = e.target.checked
                                             ? [...currentResponses, option]
-                                            : currentResponses.filter(res => res !== option);
-                                          handleResponseChange(field.id, newResponses);
+                                            : currentResponses.filter(
+                                                (res) => res !== option
+                                              );
+                                          handleResponseChange(
+                                            field.id,
+                                            newResponses
+                                          );
                                         }
                                       }}
                                     />

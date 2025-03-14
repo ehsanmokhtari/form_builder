@@ -1,11 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { supabase } from '../lib/supabase';
-import type { Form } from '../types/form';
-import { Trash2, Calendar, Layout } from 'lucide-react';
+import { useEffect, useState } from "react";
+import { supabase } from "../lib/supabase";
+import type { Form } from "../types/form";
+import { Trash2, Calendar, Layout, Copy, Edit } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useFormStore } from "../store/formStore";
 
 const FormSettings = () => {
   const [forms, setForms] = useState<Form[]>([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const { setFields } = useFormStore();
 
   useEffect(() => {
     loadForms();
@@ -14,14 +18,14 @@ const FormSettings = () => {
   const loadForms = async () => {
     try {
       const { data, error } = await supabase
-        .from('forms')
-        .select('*')
-        .order('created_at', { ascending: false });
+        .from("forms")
+        .select("*")
+        .order("created_at", { ascending: false });
 
       if (error) throw error;
       setForms(data || []);
     } catch (error) {
-      console.error('Error loading forms:', error);
+      console.error("Error loading forms:", error);
     } finally {
       setLoading(false);
     }
@@ -29,16 +33,39 @@ const FormSettings = () => {
 
   const deleteForm = async (formId: string) => {
     try {
-      const { error } = await supabase
-        .from('forms')
-        .delete()
-        .eq('id', formId);
+      const { error } = await supabase.from("forms").delete().eq("id", formId);
 
       if (error) throw error;
-      setForms(forms.filter(form => form.id !== formId));
+      setForms(forms.filter((form) => form.id !== formId));
     } catch (error) {
-      console.error('Error deleting form:', error);
+      console.error("Error deleting form:", error);
     }
+  };
+
+  const copyForm = async (form: Form) => {
+    try {
+      const { data, error } = await supabase
+        .from("forms")
+        .insert({
+          title: `${form.title} (Copy)`,
+          description: form.description,
+          fields: form.fields,
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+      if (data) {
+        setForms([data, ...forms]);
+      }
+    } catch (error) {
+      console.error("Error copying form:", error);
+    }
+  };
+
+  const editForm = (form: Form) => {
+    setFields(form.fields);
+    navigate("/");
   };
 
   if (loading) {
@@ -76,14 +103,21 @@ const FormSettings = () => {
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {forms.map((form) => (
-                <tr key={form.id} className="hover:bg-purple-50 transition-colors duration-150">
+                <tr
+                  key={form.id}
+                  className="hover:bg-purple-50 transition-colors duration-150"
+                >
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
                       <Layout className="flex-shrink-0 h-5 w-5 text-purple-500" />
                       <div className="ml-3">
-                        <div className="text-sm font-medium text-gray-900">{form.title}</div>
+                        <div className="text-sm font-medium text-gray-900">
+                          {form.title}
+                        </div>
                         {form.description && (
-                          <div className="text-sm text-gray-500">{form.description}</div>
+                          <div className="text-sm text-gray-500">
+                            {form.description}
+                          </div>
                         )}
                       </div>
                     </div>
@@ -100,16 +134,37 @@ const FormSettings = () => {
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <button
-                      onClick={() => {
-                        if (confirm('Are you sure you want to delete this form?')) {
-                          deleteForm(form.id);
-                        }
-                      }}
-                      className="text-red-600 hover:text-red-900 transition-colors duration-150"
-                    >
-                      <Trash2 className="w-5 h-5" />
-                    </button>
+                    <div className="flex items-center justify-end space-x-2">
+                      <button
+                        onClick={() => copyForm(form)}
+                        className="text-indigo-600 hover:text-indigo-900 transition-colors duration-150"
+                        title="Copy form"
+                      >
+                        <Copy className="w-5 h-5" />
+                      </button>
+                      <button
+                        onClick={() => editForm(form)}
+                        className="text-blue-600 hover:text-blue-900 transition-colors duration-150"
+                        title="Edit form"
+                      >
+                        <Edit className="w-5 h-5" />
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (
+                            confirm(
+                              "Are you sure you want to delete this form?"
+                            )
+                          ) {
+                            deleteForm(form.id);
+                          }
+                        }}
+                        className="text-red-600 hover:text-red-900 transition-colors duration-150"
+                        title="Delete form"
+                      >
+                        <Trash2 className="w-5 h-5" />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -122,7 +177,9 @@ const FormSettings = () => {
         <div className="text-center py-12 bg-white rounded-xl shadow-lg border border-purple-100">
           <Layout className="mx-auto h-12 w-12 text-gray-400" />
           <h3 className="mt-2 text-sm font-medium text-gray-900">No forms</h3>
-          <p className="mt-1 text-sm text-gray-500">Get started by creating a new form.</p>
+          <p className="mt-1 text-sm text-gray-500">
+            Get started by creating a new form.
+          </p>
         </div>
       )}
     </div>
