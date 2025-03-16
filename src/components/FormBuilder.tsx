@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { DndContext, closestCenter, DragEndEvent } from "@dnd-kit/core";
 import {
   arrayMove,
@@ -7,19 +7,35 @@ import {
 } from "@dnd-kit/sortable";
 import { useFormStore } from "../store/formStore";
 import FormField from "./FormField";
-import { Plus, Save, Eye, EyeOff } from "lucide-react";
+import { Plus, Save, Eye, EyeOff, Copy } from "lucide-react";
 import { supabase } from "../lib/supabase";
-import { useNavigate } from "react-router-dom";
-import FormPreview from "./FormPreview.tsx";
+import { useNavigate, useLocation } from "react-router-dom";
+import FormPreview from "./FormPreview";
+import CustomDialog from "./CustomDialog";
 
 const FormBuilder = () => {
-  const { fields, addField, reorderFields } = useFormStore();
+  const { fields, addField, reorderFields, setFields } = useFormStore();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showPreview, setShowPreview] = useState(true);
+  const [formId, setFormId] = useState<string | null>(null);
+  const [saveAsNew, setSaveAsNew] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    // Check if we're editing an existing form
+    const state = location.state as { form?: { id: string; title: string; description: string; fields: any[] } };
+    if (state?.form) {
+      setFormId(state.form.id);
+      setTitle(state.form.title);
+      setDescription(state.form.description || "");
+      setFields(state.form.fields);
+    }
+  }, [location, setFields]);
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
@@ -51,16 +67,30 @@ const FormBuilder = () => {
         is_multiline: field.is_multiline || false,
       }));
 
-      const { error: supabaseError } = await supabase.from("forms").insert({
+      const formData = {
         title: title.trim(),
         description: description.trim() || null,
         fields: formattedFields,
-      });
+      };
 
-      if (supabaseError) {
-        throw new Error(supabaseError.message);
+      let error;
+      
+      if (formId && !saveAsNew) {
+        // Update existing form
+        const { error: updateError } = await supabase
+          .from("forms")
+          .update(formData)
+          .eq("id", formId);
+        error = updateError;
+      } else {
+        // Create new form
+        const { error: insertError } = await supabase
+          .from("forms")
+          .insert(formData);
+        error = insertError;
       }
 
+      if (error) throw error;
       navigate("/settings");
     } catch (err) {
       console.error("Error saving form:", err);
@@ -77,7 +107,9 @@ const FormBuilder = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-gray-900">Form Builder</h2>
+        <h2 className="text-2xl font-bold text-gray-900">
+          {formId ? "Edit Form" : "Create Form"}
+        </h2>
         <div className="flex items-center gap-2">
           <button
             onClick={() => setShowPreview(!showPreview)}
@@ -95,13 +127,28 @@ const FormBuilder = () => {
               </>
             )}
           </button>
+          {formId && (
+            <button
+              onClick={() => {
+                setSaveAsNew(true);
+                setDialogOpen(true);
+              }}
+              className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+            >
+              <Copy className="w-4 h-4 mr-2" />
+              Save as New
+            </button>
+          )}
           <button
-            onClick={handleSave}
+            onClick={() => {
+              setSaveAsNew(false);
+              setDialogOpen(true);
+            }}
             disabled={saving}
             className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50"
           >
             <Save className="w-4 h-4 mr-2" />
-            {saving ? "Saving..." : "Save Form"}
+            {saving ? "Saving..." : formId ? "Update Form" : "Save Form"}
           </button>
         </div>
       </div>
@@ -129,9 +176,7 @@ const FormBuilder = () => {
         </div>
       )}
 
-      <div
-        className={`flex flex-col gap-6`}
-      >
+      <div className="flex flex-col gap-6">
         <div className="space-y-6">
           <div className="space-y-4">
             <div>
@@ -202,7 +247,7 @@ const FormBuilder = () => {
               items={fields}
               strategy={verticalListSortingStrategy}
             >
-              <div className="space-y-4 gap-2">
+              <div className="space-y-4 grid grid-cols-12 gap-2">
                 {fields.map((field) => (
                   <FormField key={field.id} field={field} />
                 ))}
@@ -236,6 +281,21 @@ const FormBuilder = () => {
           </div>
         )}
       </div>
+
+      <CustomDialog
+        isOpen={dialogOpen}
+        title={saveAsNew ? "Save as New Form" : formId ? "Update Form" : "Save Form"}
+        message={saveAsNew 
+          ? "Do you want to save this as a new form?" 
+          : formId 
+          ? "Do you want to update the existing form?"
+          : "Do you want to save this form?"}
+        onConfirm={() => {
+          handleSave();
+          setDialogOpen(false);
+        }}
+        onCancel={() => setDialogOpen(false)}
+      />
     </div>
   );
 };

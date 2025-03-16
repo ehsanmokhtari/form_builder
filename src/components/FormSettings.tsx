@@ -67,8 +67,7 @@ const FormSettings = () => {
   };
 
   const editForm = (form: Form) => {
-    setFields(form.fields);
-    navigate("/");
+    navigate("/", { state: { form } });
   };
 
   const handleDelete = (formId: string) => {

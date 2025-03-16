@@ -70,7 +70,8 @@ const FormResponsePage = () => {
       });
 
       if (error) throw error;
-      alert("Response submitted successfully!");
+      setDialogMessage("Response submitted successfully!");
+      setDialogOpen(true);
     } catch (error) {
       console.error("Error submitting response:", error);
     }
