@@ -7,9 +7,10 @@ import {
 } from "@dnd-kit/sortable";
 import { useFormStore } from "../store/formStore";
 import FormField from "./FormField";
-import { Plus, Save } from "lucide-react";
+import { Plus, Save, Eye, EyeOff } from "lucide-react";
 import { supabase } from "../lib/supabase";
 import { useNavigate } from "react-router-dom";
+import FormPreview from "./FormPreview.tsx";
 
 const FormBuilder = () => {
   const { fields, addField, reorderFields } = useFormStore();
@@ -17,6 +18,7 @@ const FormBuilder = () => {
   const [description, setDescription] = useState("");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showPreview, setShowPreview] = useState(true);
   const navigate = useNavigate();
 
   const handleDragEnd = (event: DragEndEvent) => {
@@ -76,14 +78,32 @@ const FormBuilder = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold text-gray-900">Form Builder</h2>
-        <button
-          onClick={handleSave}
-          disabled={saving}
-          className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50"
-        >
-          <Save className="w-4 h-4 mr-2" />
-          {saving ? "Saving..." : "Save Form"}
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowPreview(!showPreview)}
+            className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+          >
+            {showPreview ? (
+              <>
+                <EyeOff className="w-4 h-4 mr-2" />
+                Hide Preview
+              </>
+            ) : (
+              <>
+                <Eye className="w-4 h-4 mr-2" />
+                Show Preview
+              </>
+            )}
+          </button>
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50"
+          >
+            <Save className="w-4 h-4 mr-2" />
+            {saving ? "Saving..." : "Save Form"}
+          </button>
+        </div>
       </div>
 
       {error && (
@@ -109,84 +129,113 @@ const FormBuilder = () => {
         </div>
       )}
 
-      <div className="space-y-4">
-        <div>
-          <label
-            htmlFor="title"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Form Title
-          </label>
-          <input
-            type="text"
-            id="title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-            placeholder="Enter form title"
-          />
-        </div>
+      <div
+        className={`flex flex-col gap-6`}
+      >
+        <div className="space-y-6">
+          <div className="space-y-4">
+            <div>
+              <label
+                htmlFor="title"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Form Title
+              </label>
+              <input
+                type="text"
+                id="title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                placeholder="Enter form title"
+              />
+            </div>
 
-        <div>
-          <label
-            htmlFor="description"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Description (optional)
-          </label>
-          <textarea
-            id="description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            rows={3}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-            placeholder="Enter form description"
-          />
-        </div>
-      </div>
-
-      <div className="flex justify-end space-x-2">
-        <button
-          onClick={() => addField({ type: "text", content: "", width: 12 })}
-          className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
-        >
-          <Plus className="w-4 h-4 mr-2" />
-          Add Text
-        </button>
-        <button
-          onClick={() =>
-            addField({
-              type: "question",
-              content: "",
-              required: false,
-              questionType: "descriptive",
-              width: 12,
-            })
-          }
-          className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
-        >
-          <Plus className="w-4 h-4 mr-2" />
-          Add Question
-        </button>
-      </div>
-
-      <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-        <SortableContext items={fields} strategy={verticalListSortingStrategy}>
-          <div className="space-y-4 grid grid-cols-12 gap-2">
-            {fields.map((field) => (
-              <FormField key={field.id} field={field} />
-            ))}
+            <div>
+              <label
+                htmlFor="description"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Description (optional)
+              </label>
+              <textarea
+                id="description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                rows={3}
+                className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                placeholder="Enter form description"
+              />
+            </div>
           </div>
-        </SortableContext>
-      </DndContext>
 
-      {fields.length === 0 && (
-        <div className="text-center py-12">
-          <p className="text-gray-500">
-            No fields added yet. Start by adding a text or question field.
-          </p>
+          <div className="flex justify-end space-x-2">
+            <button
+              onClick={() => addField({ type: "text", content: "", width: 12 })}
+              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add Text
+            </button>
+            <button
+              onClick={() =>
+                addField({
+                  type: "question",
+                  content: "",
+                  required: false,
+                  questionType: "descriptive",
+                  width: 12,
+                })
+              }
+              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add Question
+            </button>
+          </div>
+
+          <DndContext
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
+            <SortableContext
+              items={fields}
+              strategy={verticalListSortingStrategy}
+            >
+              <div className="space-y-4 gap-2">
+                {fields.map((field) => (
+                  <FormField key={field.id} field={field} />
+                ))}
+              </div>
+            </SortableContext>
+          </DndContext>
+
+          {fields.length === 0 && (
+            <div className="text-center py-12">
+              <p className="text-gray-500">
+                No fields added yet. Start by adding a text or question field.
+              </p>
+            </div>
+          )}
         </div>
-      )}
+
+        {showPreview && (
+          <div className="border-l pl-6">
+            <div className="sticky top-6">
+              <h3 className="text-lg font-medium text-gray-900 mb-4">
+                Form Preview
+              </h3>
+              <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-6">
+                <FormPreview
+                  title={title}
+                  description={description}
+                  fields={fields}
+                />
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

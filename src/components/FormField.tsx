@@ -86,23 +86,6 @@ const FormField: React.FC<FormFieldProps> = ({ field }) => {
               <option value={6}>Half Width</option>
               <option value={4}>Third Width</option>
             </select>
-
-            {field.type === "question" && (
-              <label className="flex items-center gap-2 text-sm">
-                <input
-                  type="checkbox"
-                  checked={field.includeInSummary ?? true}
-                  onChange={(e) =>
-                    updateField(field.id, {
-                      includeInSummary: e.target.checked,
-                    })
-                  }
-                  className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
-                />
-                <BarChart3 className="w-4 h-4 text-gray-500" />
-                Include in Summary
-              </label>
-            )}
           </div>
         </div>
 
@@ -134,17 +117,21 @@ const FormField: React.FC<FormFieldProps> = ({ field }) => {
                   <option value="multiple">Multiple Choice</option>
                 </select>
 
-                <label className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={field.is_multiline}
-                    onChange={(e) =>
-                      updateField(field.id, { is_multiline: e.target.checked })
-                    }
-                    className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
-                  />
-                  Multi-line
-                </label>
+                {field.questionType === "descriptive" && (
+                  <label className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      checked={field.is_multiline}
+                      onChange={(e) =>
+                        updateField(field.id, {
+                          is_multiline: e.target.checked,
+                        })
+                      }
+                      className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
+                    />
+                    Multi-line
+                  </label>
+                )}
 
                 <label className="flex items-center gap-2">
                   <input
@@ -197,7 +184,7 @@ const FormField: React.FC<FormFieldProps> = ({ field }) => {
               </div>
 
               <div
-                className={`flex gap-2 ${
+                className={`flex flex-wrap gap-2 ${
                   field.answerPlacement === "below" ? "flex-col" : "flex-row"
                 }`}
               >
@@ -209,7 +196,7 @@ const FormField: React.FC<FormFieldProps> = ({ field }) => {
                     updateField(field.id, { content: e.target.value })
                   }
                   style={{ width: `${inputWidth || 100}px` }}
-                  className="p-2 border border-gray-300 rounded-md h-fit min-w-[50px]"
+                  className="p-2 border border-gray-300 rounded-md h-fit min-w-[140px]"
                   placeholder="Enter question..."
                 />
 
@@ -279,6 +266,22 @@ const FormField: React.FC<FormFieldProps> = ({ field }) => {
             </div>
           )}
         </div>
+        {field.type === "question" && (
+          <label className="flex items-center gap-2 text-sm">
+            <input
+              type="checkbox"
+              checked={field.includeInSummary ?? true}
+              onChange={(e) =>
+                updateField(field.id, {
+                  includeInSummary: e.target.checked,
+                })
+              }
+              className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
+            />
+            <BarChart3 className="w-4 h-4 text-gray-500" />
+            Include in Summary
+          </label>
+        )}
       </div>
     </div>
   );

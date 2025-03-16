@@ -81,7 +81,7 @@ const FormResponsePage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-indigo-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-indigo-50 py-12 px-2 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-8">
           <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
@@ -112,28 +112,29 @@ const FormResponsePage = () => {
               <h3 className="text-2xl font-bold text-gray-900 mb-6">
                 {selectedForm.title}
               </h3>
-              <div className="grid grid-cols-12 gap-6">
+              <div className="grid grid-cols-12 gap-2">
                 {selectedForm.fields
                   .sort((a, b) => a.order - b.order)
                   .map((field: FormField) => {
-                    const widthClass = `col-span-${field.width || 12}`;
+                    const widthClass = `sm:col-span-${field.width || 12}`;
                     return (
-                      <div key={field.id} className={`${widthClass}`}>
+                      <div
+                        key={field.id}
+                        className={`bg-purple-50 rounded-lg text-wrap whitespace-break-spaces p-4 h-full flex items-center col-span-12 ${widthClass}`}
+                      >
                         {field.type === "text" ? (
-                          <div className="bg-purple-50 rounded-lg p-4">
-                            <p className="text-gray-700 text-wrap whitespace-break-spaces">
-                              {field.content}
-                            </p>
-                          </div>
+                          <p className="text-gray-700">
+                            {field.content}
+                          </p>
                         ) : (
                           <div
-                            className={`space-y-3 ${
+                            className={`flex gap-4 w-full flex-wrap ${
                               field.answerPlacement === "front"
-                                ? "flex items-center gap-4"
+                                ? "items-center sm:flex-nowrap"
                                 : ""
                             }`}
                           >
-                            <label className="block text-sm font-medium text-gray-700 text-nowrap">
+                            <label className="block text-sm font-medium text-gray-700 text-wrap">
                               {field.content}{" "}
                               {field.required && (
                                 <span className="text-red-500">*</span>
@@ -155,7 +156,7 @@ const FormResponsePage = () => {
                               ) : (
                                 <input
                                   type="text"
-                                  className="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-purple-500 focus:border-purple-500 bg-white"
+                                  className="block w-full min-w-20 px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-purple-500 focus:border-purple-500 bg-white"
                                   onChange={(e) =>
                                     handleResponseChange(
                                       field.id,
@@ -167,7 +168,7 @@ const FormResponsePage = () => {
                               )
                             ) : (
                               <div
-                                className={`gap-4 ${
+                                className={`gap-4  ${
                                   field.optionLayout === "column"
                                     ? "flex flex-col flex-wrap"
                                     : "flex flex-row flex-wrap"
