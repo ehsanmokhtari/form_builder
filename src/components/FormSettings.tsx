@@ -4,12 +4,15 @@ import type { Form } from "../types/form";
 import { Trash2, Calendar, Layout, Copy, Edit } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useFormStore } from "../store/formStore";
+import CustomDialog from "./CustomDialog";
 
 const FormSettings = () => {
   const [forms, setForms] = useState<Form[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { setFields } = useFormStore();
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [formToDelete, setFormToDelete] = useState<string | null>(null);
 
   useEffect(() => {
     loadForms();
@@ -66,6 +69,19 @@ const FormSettings = () => {
   const editForm = (form: Form) => {
     setFields(form.fields);
     navigate("/");
+  };
+
+  const handleDelete = (formId: string) => {
+    setFormToDelete(formId);
+    setDialogOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (formToDelete) {
+      await deleteForm(formToDelete);
+      setFormToDelete(null);
+    }
+    setDialogOpen(false);
   };
 
   if (loading) {
@@ -150,15 +166,7 @@ const FormSettings = () => {
                         <Edit className="w-5 h-5" />
                       </button>
                       <button
-                        onClick={() => {
-                          if (
-                            confirm(
-                              "Are you sure you want to delete this form?"
-                            )
-                          ) {
-                            deleteForm(form.id);
-                          }
-                        }}
+                        onClick={() => handleDelete(form.id)}
                         className="text-red-600 hover:text-red-900 transition-colors duration-150"
                         title="Delete form"
                       >
@@ -182,6 +190,14 @@ const FormSettings = () => {
           </p>
         </div>
       )}
+
+      <CustomDialog
+        isOpen={dialogOpen}
+        title="Delete Form"
+        message="Are you sure you want to delete this form?"
+        onConfirm={confirmDelete}
+        onCancel={() => setDialogOpen(false)}
+      />
     </div>
   );
 };

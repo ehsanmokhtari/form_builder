@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../lib/supabase";
 import type { Form, FormField } from "../types/form";
+import CustomDialog from "./CustomDialog";
 
 const FormResponsePage = () => {
   const [forms, setForms] = useState<Form[]>([]);
@@ -9,6 +10,8 @@ const FormResponsePage = () => {
     {}
   );
   const [loading, setLoading] = useState(true);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogMessage, setDialogMessage] = useState("");
 
   useEffect(() => {
     const loadForms = async () => {
@@ -55,7 +58,8 @@ const FormResponsePage = () => {
       .map((field) => field.content);
 
     if (missingFields.length > 0) {
-      alert(`Please fill out the required fields: ${missingFields.join(", ")}`);
+      setDialogMessage(`Please fill out the required fields: ${missingFields.join(", ")}`);
+      setDialogOpen(true);
       return;
     }
 
@@ -239,6 +243,12 @@ const FormResponsePage = () => {
           </div>
         )}
       </div>
+      <CustomDialog
+        isOpen={dialogOpen}
+        title="Missing Fields"
+        message={dialogMessage}
+        onConfirm={() => setDialogOpen(false)}
+      />
     </div>
   );
 };
