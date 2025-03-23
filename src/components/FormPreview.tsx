@@ -48,7 +48,7 @@ const FormPreview = ({ title, description, fields }: FormPreviewProps) => {
           {layoutWidths[layoutIndex]}px Version
         </button>
       </div>
-      <div className="overflow-x-scroll ">
+      <div className="overflow-x-scroll py-5">
         <div className={`flex flex-col justify-center w-[${layoutWidths[layoutIndex]}px]`}>
           <div className="grid grid-cols-12 gap-2">
             {fields.map((field) => {

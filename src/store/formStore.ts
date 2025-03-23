@@ -3,15 +3,28 @@ import { FormField } from "../types/form";
 
 interface FormState {
   fields: FormField[];
+  title: string;
+  description: string;
+  formId: string | null;
+  setTitle: (title: string) => void;
+  setDescription: (description: string) => void;
+  setFormId: (formId: string | null) => void;
   addField: (field: Omit<FormField, "id" | "order">) => void;
   updateField: (id: string, field: Partial<FormField>) => void;
   removeField: (id: string) => void;
-  reorderFields: (fields: FormField[]) => void;
+  updateFields: (fields: FormField[]) => void;
+  clearForm: () => void;
   setFields: (fields: FormField[]) => void;
 }
 
 export const useFormStore = create<FormState>((set) => ({
   fields: [],
+  title: "",
+  description: "",
+  formId: null,
+  setTitle: (title) => set({ title }),
+  setDescription: (description) => set({ description }),
+  setFormId: (formId) => set({ formId }),
   addField: (field) =>
     set((state) => ({
       fields: [
@@ -39,6 +52,8 @@ export const useFormStore = create<FormState>((set) => ({
     set((state) => ({
       fields: state.fields.filter((f) => f.id !== id),
     })),
-  reorderFields: (fields) => set({ fields }),
+  updateFields: (fields) => set({ fields }),
+  clearForm: () =>
+    set({ fields: [], description: "", title: "", formId: null }),
   setFields: (fields) => set({ fields }),
 }));

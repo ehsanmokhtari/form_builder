@@ -7,20 +7,30 @@ import {
 } from "@dnd-kit/sortable";
 import { useFormStore } from "../store/formStore";
 import FormField from "./FormField";
-import { Plus, Save, Eye, EyeOff, Copy } from "lucide-react";
+import { Plus, Save, Eye, EyeOff, Copy, SquareX } from "lucide-react";
 import { supabase } from "../lib/supabase";
 import { useNavigate, useLocation } from "react-router-dom";
 import FormPreview from "./FormPreview";
 import CustomDialog from "./CustomDialog";
 
 const FormBuilder = () => {
-  const { fields, addField, reorderFields, setFields } = useFormStore();
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
+  const {
+    fields,
+    title,
+    description,
+    formId,
+    setTitle,
+    setDescription,
+    setFormId,
+    setFields,
+    updateFields,
+    clearForm,
+    addField,
+  } = useFormStore();
+
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showPreview, setShowPreview] = useState(true);
-  const [formId, setFormId] = useState<string | null>(null);
   const [saveAsNew, setSaveAsNew] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const navigate = useNavigate();
@@ -28,14 +38,16 @@ const FormBuilder = () => {
 
   useEffect(() => {
     // Check if we're editing an existing form
-    const state = location.state as { form?: { id: string; title: string; description: string; fields: any[] } };
+    const state = location.state as {
+      form?: { id: string; title: string; description: string; fields: any[] };
+    };
     if (state?.form) {
       setFormId(state.form.id);
       setTitle(state.form.title);
       setDescription(state.form.description || "");
       setFields(state.form.fields);
     }
-  }, [location, setFields]);
+  }, [location, setFormId, setTitle, setDescription, setFields]);
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
@@ -44,7 +56,7 @@ const FormBuilder = () => {
       const oldIndex = fields.findIndex((f) => f.id === active.id);
       const newIndex = fields.findIndex((f) => f.id === over.id);
 
-      reorderFields(arrayMove(fields, oldIndex, newIndex));
+      updateFields(arrayMove(fields, oldIndex, newIndex));
     }
   };
 
@@ -74,7 +86,7 @@ const FormBuilder = () => {
       };
 
       let error;
-      
+
       if (formId && !saveAsNew) {
         // Update existing form
         const { error: updateError } = await supabase
@@ -101,6 +113,7 @@ const FormBuilder = () => {
       );
     } finally {
       setSaving(false);
+      clearForm();
     }
   };
 
@@ -128,16 +141,29 @@ const FormBuilder = () => {
             )}
           </button>
           {formId && (
-            <button
-              onClick={() => {
-                setSaveAsNew(true);
-                setDialogOpen(true);
-              }}
-              className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-            >
-              <Copy className="w-4 h-4 mr-2" />
-              Save as New
-            </button>
+            <>
+              <button
+                onClick={() => {
+                  setSaveAsNew(true);
+                  setDialogOpen(true);
+                }}
+                className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+              >
+                <Copy className="w-4 h-4 mr-2" />
+                Save as New
+              </button>
+              <button
+                onClick={() => {
+                  clearForm();
+                  navigate("/settings")
+                }}
+                disabled={saving}
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-orange-600 hover:bg-orange-700 disabled:opacity-50"
+              >
+                <SquareX className="w-4 h-4 mr-2" />
+                Cancel Update
+              </button>
+            </>
           )}
           <button
             onClick={() => {
@@ -284,12 +310,16 @@ const FormBuilder = () => {
 
       <CustomDialog
         isOpen={dialogOpen}
-        title={saveAsNew ? "Save as New Form" : formId ? "Update Form" : "Save Form"}
-        message={saveAsNew 
-          ? "Do you want to save this as a new form?" 
-          : formId 
-          ? "Do you want to update the existing form?"
-          : "Do you want to save this form?"}
+        title={
+          saveAsNew ? "Save as New Form" : formId ? "Update Form" : "Save Form"
+        }
+        message={
+          saveAsNew
+            ? "Do you want to save this as a new form?"
+            : formId
+            ? "Do you want to update the existing form?"
+            : "Do you want to save this form?"
+        }
         onConfirm={() => {
           handleSave();
           setDialogOpen(false);

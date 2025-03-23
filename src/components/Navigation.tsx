@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { LayoutGrid, FileText, Settings } from "lucide-react";
 import { useState } from "react";
 
@@ -83,32 +83,43 @@ const Navigation = () => {
 };
 
 function NavigationLinks({ className }: { className: string }) {
+  const { pathname } = useLocation();
   return (
     <>
       <Link
         to="/"
-        className={`inline-flex items-center px-3 py-2 text-sm font-medium text-gray-900 hover:text-purple-600 transition-colors duration-200 ${className}`}
+        className={`inline-flex items-center px-3 py-2 text-sm text-gray-500 hover:text-purple-600 transition-colors duration-200 ${
+          pathname === "/" ? "font-bold text-purple-600" : "font-medium"
+        } ${className}`}
       >
         <LayoutGrid className="w-4 h-4 mr-2" />
         Builder
       </Link>
       <Link
         to="/responses"
-        className={`inline-flex items-center px-3 py-2 text-sm font-medium text-gray-500 hover:text-purple-600 transition-colors duration-200 ${className}`}
+        className={`inline-flex items-center px-3 py-2 text-sm text-gray-500 hover:text-purple-600 transition-colors duration-200 ${
+          pathname === "/responses"
+            ? "font-bold text-purple-600"
+            : "font-medium"
+        } ${className}`}
       >
         <FileText className="w-4 h-4 mr-2" />
         Responses
       </Link>
       <Link
         to="/settings"
-        className={`inline-flex items-center px-3 py-2 text-sm font-medium text-gray-500 hover:text-purple-600 transition-colors duration-200 ${className}`}
+        className={`inline-flex items-center px-3 py-2 text-sm text-gray-500 hover:text-purple-600 transition-colors duration-200 ${
+          pathname === "/settings" ? "font-bold text-purple-600" : "font-medium"
+        } ${className}`}
       >
         <Settings className="w-4 h-4 mr-2" />
         Settings
       </Link>
       <Link
         to="/respond"
-        className={`inline-flex items-center px-3 py-2 text-sm font-medium text-gray-500 hover:text-purple-600 transition-colors duration-200 ${className}`}
+        className={`inline-flex items-center px-3 py-2 text-sm text-gray-500 hover:text-purple-600 transition-colors duration-200 ${
+          pathname === "/respond" ? "font-bold text-purple-600" : "font-medium"
+        } ${className}`}
       >
         <FileText className="w-4 h-4 mr-2" />
         Respond
@@ -116,6 +127,5 @@ function NavigationLinks({ className }: { className: string }) {
     </>
   );
 }
-
 
 export default Navigation;

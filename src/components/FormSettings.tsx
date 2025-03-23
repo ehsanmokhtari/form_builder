@@ -3,14 +3,12 @@ import { supabase } from "../lib/supabase";
 import type { Form } from "../types/form";
 import { Trash2, Calendar, Layout, Copy, Edit } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useFormStore } from "../store/formStore";
 import CustomDialog from "./CustomDialog";
 
 const FormSettings = () => {
   const [forms, setForms] = useState<Form[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const { setFields } = useFormStore();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [formToDelete, setFormToDelete] = useState<string | null>(null);
 
