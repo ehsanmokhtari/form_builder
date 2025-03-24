@@ -9,7 +9,7 @@ interface FormPreviewProps {
 }
 
 const FormPreview = ({ title, description, fields }: FormPreviewProps) => {
-  const layoutWidths = [380, 480, 768, 1028, 1280, 1920];
+  const layoutWidths = [384, 576, 768, 1024];
   const [layoutIndex, setLayoutIndex] = useState(0);
   const [responses, setResponses] = useState<Record<string, string | string[]>>(
     {}
@@ -39,7 +39,7 @@ const FormPreview = ({ title, description, fields }: FormPreviewProps) => {
           className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
         >
           <span className="mr-2">
-            {layoutWidths[layoutIndex] <= 480 ? (
+            {layoutWidths[layoutIndex] <= 576 ? (
               <Smartphone className="w-4 h-4" />
             ) : (
               <Laptop className="w-4 h-4" />
@@ -55,7 +55,7 @@ const FormPreview = ({ title, description, fields }: FormPreviewProps) => {
           <div className="grid grid-cols-12 gap-2">
             {fields.map((field) => {
               const widthClass = `${
-                layoutWidths[layoutIndex] > 480
+                layoutWidths[layoutIndex] > 576
                   ? "col-span-" + (field.width || 12)
                   : "col-span-12"
               }`;
@@ -69,15 +69,23 @@ const FormPreview = ({ title, description, fields }: FormPreviewProps) => {
                   ) : (
                     <div
                       className={`flex gap-4 w-full ${
-                        layoutWidths[layoutIndex] > 480
+                        layoutWidths[layoutIndex] > 576
                           ? "flex-nowrap " +
                             (field.answerPlacement === "front"
-                              ? "flex-row"
+                              ? "flex-row justify-between"
                               : "flex-col")
                           : "flex-wrap"
                       }`}
                     >
-                      <label className="block text-sm font-medium text-gray-700 text-wrap">
+                      <label
+                        className={`text-sm font-medium text-gray-700 text-wrap  ${
+                          layoutWidths[layoutIndex] > 576
+                            ? field.answerPlacement === "front"
+                              ? "w-2/5"
+                              : "w-full"
+                            : "w-full"
+                        }`}
+                      >
                         {field.content}{" "}
                         {field.required && (
                           <span className="text-red-500">*</span>
@@ -86,7 +94,7 @@ const FormPreview = ({ title, description, fields }: FormPreviewProps) => {
                       {field.questionType === "descriptive" ? (
                         field.is_multiline ? (
                           <textarea
-                            className="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-purple-500 focus:border-purple-500 bg-white"
+                            className={`w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-purple-500 focus:border-purple-500 bg-white`}
                             rows={4}
                             onChange={(e) =>
                               handleResponseChange(field.id, e.target.value)
@@ -96,7 +104,7 @@ const FormPreview = ({ title, description, fields }: FormPreviewProps) => {
                         ) : (
                           <input
                             type="text"
-                            className="block w-full min-w-20 px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-purple-500 focus:border-purple-500 bg-white"
+                            className={`w-full min-w-20 px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-purple-500 focus:border-purple-500 bg-white`}
                             onChange={(e) =>
                               handleResponseChange(field.id, e.target.value)
                             }
@@ -105,10 +113,10 @@ const FormPreview = ({ title, description, fields }: FormPreviewProps) => {
                         )
                       ) : (
                         <div
-                          className={`gap-4 ${
+                          className={`gap-4 w-full ${
                             field.optionLayout === "column"
-                              ? "flex flex-col"
-                              : "flex flex-row flex-wrap"
+                              ? "flex items-start flex-col"
+                              : "flex justify-start flex-row flex-wrap"
                           }`}
                         >
                           {field.options?.map((option, index) => (

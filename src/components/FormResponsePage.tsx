@@ -58,7 +58,9 @@ const FormResponsePage = () => {
       .map((field) => field.content);
 
     if (missingFields.length > 0) {
-      setDialogMessage(`Please fill out the required fields: ${missingFields.join(", ")}`);
+      setDialogMessage(
+        `Please fill out the required fields: ${missingFields.join(", ")}`
+      );
       setDialogOpen(true);
       return;
     }
@@ -87,7 +89,7 @@ const FormResponsePage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-indigo-50 py-12 px-2 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-5xl mx-auto">
         <div className="text-center mb-8">
           <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
             Respond to a Form
@@ -100,7 +102,7 @@ const FormResponsePage = () => {
         <div className="mb-8">
           <select
             onChange={(e) => handleFormSelect(e.target.value)}
-            className="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-purple-500 focus:border-purple-500 bg-white"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-purple-500 focus:border-purple-500 bg-white"
           >
             <option value="">Select a form</option>
             {forms.map((form) => (
@@ -128,9 +130,7 @@ const FormResponsePage = () => {
                         className={`bg-purple-50 rounded-lg text-wrap whitespace-break-spaces p-4 h-full flex items-center col-span-12 ${widthClass}`}
                       >
                         {field.type === "text" ? (
-                          <p className="text-gray-700">
-                            {field.content}
-                          </p>
+                          <p className="text-gray-700">{field.content}</p>
                         ) : (
                           <div
                             className={`flex gap-4 w-full flex-wrap sm:flex-nowrap ${
@@ -139,7 +139,14 @@ const FormResponsePage = () => {
                                 : "flex-col"
                             }`}
                           >
-                            <label className="block text-sm font-medium text-gray-700 text-wrap">
+                            <label
+                              className={
+                                `text-sm font-medium text-gray-700 text-wrap w-full ` +
+                                (field.answerPlacement === "front"
+                                  ? "sm:w-2/5"
+                                  : "")
+                              }
+                            >
                               {field.content}{" "}
                               {field.required && (
                                 <span className="text-red-500">*</span>
@@ -148,7 +155,7 @@ const FormResponsePage = () => {
                             {field.questionType === "descriptive" ? (
                               field.is_multiline ? (
                                 <textarea
-                                  className="block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-purple-500 focus:border-purple-500 bg-white"
+                                  className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-purple-500 focus:border-purple-500 bg-white"
                                   rows={4}
                                   onChange={(e) =>
                                     handleResponseChange(
@@ -161,7 +168,7 @@ const FormResponsePage = () => {
                               ) : (
                                 <input
                                   type="text"
-                                  className="block w-full min-w-20 px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-purple-500 focus:border-purple-500 bg-white"
+                                  className="w-full min-w-20 px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-purple-500 focus:border-purple-500 bg-white"
                                   onChange={(e) =>
                                     handleResponseChange(
                                       field.id,
@@ -173,10 +180,10 @@ const FormResponsePage = () => {
                               )
                             ) : (
                               <div
-                                className={`gap-4  ${
+                                className={`gap-4 w-full ${
                                   field.optionLayout === "column"
-                                    ? "flex flex-col flex-wrap"
-                                    : "flex flex-row flex-wrap"
+                                    ? "flex items-start flex-col flex-wrap"
+                                    : "flex justify-start flex-row flex-wrap"
                                 }`}
                               >
                                 {field.options?.map((option, index) => (

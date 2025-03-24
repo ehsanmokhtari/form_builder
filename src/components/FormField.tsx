@@ -206,7 +206,7 @@ const FormField: React.FC<FormFieldProps> = ({ field }) => {
                   onChange={(e) =>
                     updateField(field.id, { content: e.target.value })
                   }
-                  style={{ width: `${inputWidth || 100}px` }}
+                  style={{ width: `${(inputWidth >= 370 ? 370 : inputWidth)  || 100}px` }}
                   className="p-2 border border-gray-300 rounded-md h-fit min-w-[140px]"
                   placeholder="Enter question..."
                 />
