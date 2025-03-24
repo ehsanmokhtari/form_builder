@@ -1,16 +1,18 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { LucideMove, Trash2, BarChart3 } from "lucide-react";
+import { LucideMove, Trash2, BarChart3, Copy } from "lucide-react";
 import { FormField as FormFieldType } from "../types/form";
 import { useFormStore } from "../store/formStore";
+import CustomDialog from "./CustomDialog";
 
 interface FormFieldProps {
   field: FormFieldType;
 }
 
 const FormField: React.FC<FormFieldProps> = ({ field }) => {
-  const { updateField, removeField } = useFormStore();
+  const { updateField, removeField, addField } = useFormStore();
+  const [dialogOpen, setDialogOpen] = useState(false);
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: field.id });
 
@@ -69,6 +71,15 @@ const FormField: React.FC<FormFieldProps> = ({ field }) => {
               className="text-red-500 hover:text-red-700"
             >
               <Trash2 className="w-5 h-5" />
+            </button>
+            <button
+              onClick={() => {
+                addField(field);
+                setDialogOpen(true);
+              }}
+              className="text-blue-500 hover:text-red-700"
+            >
+              <Copy className="w-5 h-5" />
             </button>
           </div>
 
@@ -283,6 +294,17 @@ const FormField: React.FC<FormFieldProps> = ({ field }) => {
           </label>
         )}
       </div>
+      <CustomDialog
+        isOpen={dialogOpen}
+        title="Copy of field"
+        message="A copy of the field was added to the bottom of the form"
+        autoCloseDuration={3000}
+        type="toast"
+        position="bottom-left"
+        onCancel={() => {
+          setDialogOpen(false);
+        }}
+      />
     </div>
   );
 };
