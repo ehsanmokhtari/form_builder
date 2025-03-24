@@ -5,7 +5,7 @@ export interface FormField {
   required?: boolean;
   questionType?: "multiple" | "single" | "descriptive";
   options?: string[];
-  width?: number; // Accepts values from 1 to 12
+  width: number; // Accepts values from 1 to 12
   order: number;
   is_multiline?: boolean;
   answerPlacement?: "front" | "below";

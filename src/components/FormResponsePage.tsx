@@ -133,10 +133,10 @@ const FormResponsePage = () => {
                           </p>
                         ) : (
                           <div
-                            className={`flex gap-4 w-full flex-wrap ${
+                            className={`flex gap-4 w-full flex-wrap sm:flex-nowrap ${
                               field.answerPlacement === "front"
-                                ? "items-center sm:flex-nowrap"
-                                : ""
+                                ? "flex-row"
+                                : "flex-col"
                             }`}
                           >
                             <label className="block text-sm font-medium text-gray-700 text-wrap">

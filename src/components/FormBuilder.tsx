@@ -119,11 +119,11 @@ const FormBuilder = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-gray-900">
+      <div className="flex gap-2 justify-between items-center">
+        <h2 className="text-2xl font-bold text-gray-900 text-center">
           {formId ? "Edit Form" : "Create Form"}
         </h2>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center justify-center gap-2">
           <button
             onClick={() => setShowPreview(!showPreview)}
             className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
@@ -155,7 +155,7 @@ const FormBuilder = () => {
               <button
                 onClick={() => {
                   clearForm();
-                  navigate("/settings")
+                  navigate("/settings");
                 }}
                 disabled={saving}
                 className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-orange-600 hover:bg-orange-700 disabled:opacity-50"
@@ -242,7 +242,13 @@ const FormBuilder = () => {
 
           <div className="flex justify-end space-x-2">
             <button
-              onClick={() => addField({ type: "text", content: "", width: 12 })}
+              onClick={() =>
+                addField({
+                  type: "text",
+                  content: "",
+                  width: 12,
+                })
+              }
               className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
             >
               <Plus className="w-4 h-4 mr-2" />
@@ -256,6 +262,7 @@ const FormBuilder = () => {
                   required: false,
                   questionType: "descriptive",
                   width: 12,
+                  answerPlacement: "front",
                 })
               }
               className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
@@ -273,7 +280,7 @@ const FormBuilder = () => {
               items={fields}
               strategy={verticalListSortingStrategy}
             >
-              <div className="space-y-4 grid grid-cols-12 gap-2">
+              <div className="space-y-4 sm:grid grid-cols-12 gap-2">
                 {fields.map((field) => (
                   <FormField key={field.id} field={field} />
                 ))}

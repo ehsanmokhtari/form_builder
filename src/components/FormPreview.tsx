@@ -49,11 +49,15 @@ const FormPreview = ({ title, description, fields }: FormPreviewProps) => {
         </button>
       </div>
       <div className="overflow-x-scroll py-5">
-        <div className={`flex flex-col justify-center w-[${layoutWidths[layoutIndex]}px]`}>
+        <div
+          className={`flex flex-col justify-center w-[${layoutWidths[layoutIndex]}px]`}
+        >
           <div className="grid grid-cols-12 gap-2">
             {fields.map((field) => {
               const widthClass = `${
-                layoutWidths[layoutIndex] > 480 ? "col-span-" + (field.width || 12) : "col-span-12"
+                layoutWidths[layoutIndex] > 480
+                  ? "col-span-" + (field.width || 12)
+                  : "col-span-12"
               }`;
               return (
                 <div
@@ -64,12 +68,13 @@ const FormPreview = ({ title, description, fields }: FormPreviewProps) => {
                     <p className="text-gray-700">{field.content}</p>
                   ) : (
                     <div
-                      className={`flex gap-4 w-full flex-wrap ${
+                      className={`flex gap-4 w-full ${
                         layoutWidths[layoutIndex] > 480
-                          ? "flex-nowrap"
-                          : "flex-wrap" + field.answerPlacement === "front"
-                          ? "items-center"
-                          : ""
+                          ? "flex-nowrap " +
+                            (field.answerPlacement === "front"
+                              ? "flex-row"
+                              : "flex-col")
+                          : "flex-wrap"
                       }`}
                     >
                       <label className="block text-sm font-medium text-gray-700 text-wrap">
