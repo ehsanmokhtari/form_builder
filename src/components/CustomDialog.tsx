@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { useLanguage } from "../contexts/LanguageContext";
 
 interface CustomDialogProps {
   isOpen: boolean;
@@ -21,20 +22,36 @@ const CustomDialog: React.FC<CustomDialogProps> = ({
   onConfirm,
   onCancel,
 }) => {
+  const { language, t } = useLanguage();
+
   if (!isOpen) return null;
 
   const handleClose = () => onCancel?.();
 
   const getPositionStyles = (position: string) => {
-    switch (position) {
-      case "top-right":
-        return "top-4 right-4";
-      case "top-left":
-        return "top-4 left-4";
-      case "bottom-left":
-        return "bottom-4 left-4";
-      default:
-        return "bottom-4 right-4";
+    // For RTL layout, swap left and right positions
+    if (language === "fa") {
+      switch (position) {
+        case "top-right":
+          return "top-4 left-4";
+        case "top-left":
+          return "top-4 right-4";
+        case "bottom-left":
+          return "bottom-4 right-4";
+        default:
+          return "bottom-4 left-4";
+      }
+    } else {
+      switch (position) {
+        case "top-right":
+          return "top-4 right-4";
+        case "top-left":
+          return "top-4 left-4";
+        case "bottom-left":
+          return "bottom-4 left-4";
+        default:
+          return "bottom-4 right-4";
+      }
     }
   };
 
@@ -50,24 +67,26 @@ const CustomDialog: React.FC<CustomDialogProps> = ({
 
   if (type === "modal") {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
         <div className="bg-white rounded-lg shadow-lg p-6 max-w-sm w-full">
           <h2 className="text-lg font-bold mb-4">{title}</h2>
-          <p className="mb-6">{message}</p>
+          <p className="mb-6 whitespace-pre-line line-clamp-5 overflow-y-auto">
+            {message}
+          </p>
           <div className="flex justify-end gap-4">
             {onCancel && (
               <button
                 onClick={onCancel}
                 className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
               >
-                Cancel
+                {t("cancel")}
               </button>
             )}
             <button
               onClick={onConfirm}
               className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700"
             >
-              Confirm
+              {t("confirm")}
             </button>
           </div>
         </div>
@@ -81,24 +100,29 @@ const CustomDialog: React.FC<CustomDialogProps> = ({
 
   return (
     <div className={containerClasses}>
-      <div className="bg-white rounded shadow p-4 flex items-start space-x-4">
-        <div>
-          <h3 className="text-sm font-medium mb-2">{title}</h3>
+      <div className="bg-white rounded shadow p-4 flex items-start gap-4">
+        <div className="flex-1">
+          <h3 className="font-semibold">{title}</h3>
           <p className="text-sm text-gray-600">{message}</p>
         </div>
-        {onConfirm && (
-          <button
-            onClick={onConfirm}
-            className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-          >
-            Confirm
-          </button>
-        )}
         <button
           onClick={handleClose}
-          className="ml-auto text-gray-500 hover:text-gray-700 focus:outline-none"
+          className="text-gray-500 hover:text-gray-700"
         >
-          X
+          <svg
+            className="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M6 18L18 6M6 6l12 12"
+            ></path>
+          </svg>
         </button>
       </div>
     </div>

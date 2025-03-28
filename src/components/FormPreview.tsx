@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { FormField } from "../types/form";
 import { Laptop, Smartphone } from "lucide-react";
+import { useLanguage } from "../contexts/LanguageContext";
 
 interface FormPreviewProps {
   title: string;
@@ -9,6 +10,7 @@ interface FormPreviewProps {
 }
 
 const FormPreview = ({ title, description, fields }: FormPreviewProps) => {
+  const { t } = useLanguage();
   const layoutWidths = [384, 576, 768, 1024];
   const [layoutIndex, setLayoutIndex] = useState(0);
   const [responses, setResponses] = useState<Record<string, string | string[]>>(
@@ -27,7 +29,7 @@ const FormPreview = ({ title, description, fields }: FormPreviewProps) => {
     <div className="space-y-6">
       {title && (
         <h2 className="text-2xl font-bold text-gray-900">
-          {title || "Untitled Form"}
+          {title || t("formTitle")}
         </h2>
       )}
       {description && (
@@ -38,14 +40,14 @@ const FormPreview = ({ title, description, fields }: FormPreviewProps) => {
           onClick={toggleLayout}
           className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
         >
-          <span className="mr-2">
+          <span className="me-2">
             {layoutWidths[layoutIndex] <= 576 ? (
               <Smartphone className="w-4 h-4" />
             ) : (
               <Laptop className="w-4 h-4" />
             )}
           </span>
-          {layoutWidths[layoutIndex]}px Version
+          {layoutWidths[layoutIndex]}px {t("preview")}
         </button>
       </div>
       <div className="overflow-x-scroll py-5">
@@ -99,7 +101,7 @@ const FormPreview = ({ title, description, fields }: FormPreviewProps) => {
                             onChange={(e) =>
                               handleResponseChange(field.id, e.target.value)
                             }
-                            placeholder="Enter your response..."
+                            placeholder={t("enterAnswer")}
                           />
                         ) : (
                           <input
@@ -108,7 +110,7 @@ const FormPreview = ({ title, description, fields }: FormPreviewProps) => {
                             onChange={(e) =>
                               handleResponseChange(field.id, e.target.value)
                             }
-                            placeholder="Enter your response..."
+                            placeholder={t("enterAnswer")}
                           />
                         )
                       ) : (
@@ -155,7 +157,7 @@ const FormPreview = ({ title, description, fields }: FormPreviewProps) => {
                                   }
                                 }}
                               />
-                              <label className="ml-3 text-sm text-gray-700">
+                              <label className="ms-3 text-sm text-gray-700">
                                 {option}
                               </label>
                             </div>
@@ -175,7 +177,7 @@ const FormPreview = ({ title, description, fields }: FormPreviewProps) => {
                 onClick={() => setResponses({})}
                 className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-colors duration-200"
               >
-                Submit Form
+                {t("submit")}
               </button>
             </div>
           )}

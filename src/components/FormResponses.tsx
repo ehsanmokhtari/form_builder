@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
 import type { Form, FormResponse } from "../types/form";
 import { FileText, Calendar, ChevronDown, Eye, BarChart3 } from "lucide-react";
+import { useLanguage } from "../contexts/LanguageContext";
 
 interface DetailedResponse {
   question: string;
@@ -33,6 +34,7 @@ const FormResponses = () => {
   } | null>(null);
   const [showSummary, setShowSummary] = useState(false);
   const [summary, setSummary] = useState<QuestionSummary[]>([]);
+  const { t, language } = useLanguage();
 
   useEffect(() => {
     loadForms();
@@ -150,7 +152,7 @@ const FormResponses = () => {
       .filter((field) => field.type === "question")
       .map((field) => ({
         question: field.content,
-        answer: response.responses[field.id] || "No answer provided",
+        answer: response.responses[field.id] || t("noAnswer"),
         type: field.questionType || "descriptive",
       }));
 
@@ -170,7 +172,7 @@ const FormResponses = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-3xl font-extrabold text-gray-900">
-          Form Responses
+          {t("formResponses")}
         </h2>
         <div className="flex items-center gap-4">
           {selectedForm && responses.length > 0 && (
@@ -182,7 +184,7 @@ const FormResponses = () => {
               className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
             >
               <BarChart3 className="w-4 h-4 mr-2" />
-              {showSummary ? "Hide Summary" : "View Summary"}
+              {showSummary ? t("hideSummary") : t("viewSummary")}
             </button>
           )}
           <div className="relative">
@@ -191,7 +193,7 @@ const FormResponses = () => {
               onChange={(e) => setSelectedForm(e.target.value || null)}
               className="appearance-none bg-white pl-4 pr-10 py-3 text-sm font-medium text-gray-700 rounded-lg border border-gray-300 hover:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent shadow-sm"
             >
-              <option value="">Select a form</option>
+              <option value="">{t("selectForm")}</option>
               {forms.map((form) => (
                 <option key={form.id} value={form.id}>
                   {form.title}
@@ -210,10 +212,10 @@ const FormResponses = () => {
               <div className="bg-white shadow-xl rounded-xl overflow-hidden border border-purple-100 p-6">
                 <div className="flex justify-between items-center mb-6">
                   <h3 className="text-xl font-semibold text-gray-900">
-                    Response Summary
+                    {t("responseSummary")}
                   </h3>
                   <p className="text-sm text-gray-500">
-                    Total Responses: {responses.length}
+                    {t("totalResponses")}: {responses.length}
                   </p>
                 </div>
                 <div className="space-y-8">
@@ -228,7 +230,7 @@ const FormResponses = () => {
                       {item.type === "descriptive" ? (
                         <div className="bg-purple-50 rounded-lg p-4">
                           <p className="text-sm text-gray-600 mb-2">
-                            Latest responses:
+                            {t("latestResponses")}:
                           </p>
                           <ul className="space-y-2">
                             {item.responses?.slice(0, 5).map((response, i) => (
@@ -274,14 +276,26 @@ const FormResponses = () => {
                   <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-purple-50">
                       <tr>
-                        <th className="px-6 py-4 text-left text-xs font-semibold text-purple-700 uppercase tracking-wider">
-                          Response ID
+                        <th
+                          className={`px-6 py-4 text-xs font-semibold text-purple-700 uppercase tracking-wider ${
+                            language === "fa" ? "text-right" : "text-left"
+                          }`}
+                        >
+                          {t("responseId")}
                         </th>
-                        <th className="px-6 py-4 text-left text-xs font-semibold text-purple-700 uppercase tracking-wider">
-                          Submitted At
+                        <th
+                          className={`px-6 py-4 text-xs font-semibold text-purple-700 uppercase tracking-wider ${
+                            language === "fa" ? "text-right" : "text-left"
+                          }`}
+                        >
+                          {t("submittedAt")}
                         </th>
-                        <th className="px-6 py-4 text-left text-xs font-semibold text-purple-700 uppercase tracking-wider">
-                          Actions
+                        <th
+                          className={`px-6 py-4 text-xs font-semibold text-purple-700 uppercase tracking-wider ${
+                            language === "fa" ? "text-right" : "text-left"
+                          }`}
+                        >
+                          {t("actions")}
                         </th>
                       </tr>
                     </thead>
@@ -302,7 +316,9 @@ const FormResponses = () => {
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="flex items-center text-sm text-gray-500">
                               <Calendar className="flex-shrink-0 h-4 w-4 text-gray-400 mr-2" />
-                              {new Date(response.created_at).toLocaleString()}
+                              {new Date(response.created_at).toLocaleString(
+                                language
+                              )}
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
@@ -311,7 +327,7 @@ const FormResponses = () => {
                               className="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md text-purple-600 bg-purple-100 hover:bg-purple-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
                             >
                               <Eye className="w-4 h-4 mr-2" />
-                              View Details
+                              {t("viewDetails")}
                             </button>
                           </td>
                         </tr>
@@ -326,13 +342,13 @@ const FormResponses = () => {
               <div className="bg-white shadow-xl rounded-xl overflow-hidden border border-purple-100 p-6">
                 <div className="flex justify-between items-center mb-4">
                   <h3 className="text-lg font-semibold text-gray-900">
-                    Response Details
+                    {t("responseDetails")}
                   </h3>
                   <button
                     onClick={() => setSelectedResponse(null)}
                     className="text-gray-500 hover:text-gray-700"
                   >
-                    Close
+                    {t("close")}
                   </button>
                 </div>
                 <div className="space-y-4">
@@ -362,21 +378,19 @@ const FormResponses = () => {
           <div className="text-center py-12 bg-white rounded-xl shadow-lg border border-purple-100">
             <FileText className="mx-auto h-12 w-12 text-gray-400" />
             <h3 className="mt-2 text-sm font-medium text-gray-900">
-              No responses yet
+              {t("noResponsesYet")}
             </h3>
-            <p className="mt-1 text-sm text-gray-500">
-              Share your form to start collecting responses.
-            </p>
+            <p className="mt-1 text-sm text-gray-500">{t("shareForm")}</p>
           </div>
         )
       ) : (
         <div className="text-center py-12 bg-white rounded-xl shadow-lg border border-purple-100">
           <FileText className="mx-auto h-12 w-12 text-gray-400" />
           <h3 className="mt-2 text-sm font-medium text-gray-900">
-            Select a form
+            {t("selectForm")}
           </h3>
           <p className="mt-1 text-sm text-gray-500">
-            Choose a form to view its responses.
+            {t("selectFormToViewResponses")}
           </p>
         </div>
       )}

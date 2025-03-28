@@ -1,9 +1,12 @@
 import { Link, useLocation } from "react-router-dom";
 import { LayoutGrid, FileText, Settings } from "lucide-react";
 import { useState } from "react";
+import { useLanguage } from "../contexts/LanguageContext";
+import { LanguageSwitcher } from "./LanguageSwitcher";
 
 const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { t } = useLanguage();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -15,7 +18,7 @@ const Navigation = () => {
           <div className="flex w-full justify-between">
             <div className="flex-shrink-0 flex items-center">
               <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
-                FormBuilder
+                {t("formBuilder")}
               </h1>
             </div>
             <div className="flex items-center sm:hidden">
@@ -26,7 +29,7 @@ const Navigation = () => {
                 aria-controls="mobile-menu"
                 aria-expanded={isMenuOpen}
               >
-                <span className="sr-only">Open main menu</span>
+                <span className="sr-only">{t("openMainMenu")}</span>
                 {isMenuOpen ? (
                   <svg
                     className="block h-6 w-6"
@@ -62,7 +65,7 @@ const Navigation = () => {
                 )}
               </button>
             </div>
-            <div className="hidden sm:ml-8 sm:flex sm:space-x-8">
+            <div className="hidden sm:ml-8 sm:flex sm:gap-8">
               <NavigationLinks className="" />
             </div>
           </div>
@@ -74,7 +77,7 @@ const Navigation = () => {
         className={`${isMenuOpen ? "flex justify-center" : "hidden"} sm:hidden`}
         id="mobile-menu"
       >
-        <div className="px-2 pt-2 pb-3 space-y-1">
+        <div className="flex flex-col items-center justify-center gap-1 p-2">
           <NavigationLinks className="block rounded-md text-base font-medium" />
         </div>
       </div>
@@ -84,6 +87,7 @@ const Navigation = () => {
 
 function NavigationLinks({ className }: { className: string }) {
   const { pathname } = useLocation();
+  const { t } = useLanguage();
   return (
     <>
       <Link
@@ -93,7 +97,7 @@ function NavigationLinks({ className }: { className: string }) {
         } ${className}`}
       >
         <LayoutGrid className="w-4 h-4 mr-2" />
-        Builder
+        {t("builder")}
       </Link>
       <Link
         to="/responses"
@@ -104,7 +108,7 @@ function NavigationLinks({ className }: { className: string }) {
         } ${className}`}
       >
         <FileText className="w-4 h-4 mr-2" />
-        Responses
+        {t("responses")}
       </Link>
       <Link
         to="/settings"
@@ -113,7 +117,7 @@ function NavigationLinks({ className }: { className: string }) {
         } ${className}`}
       >
         <Settings className="w-4 h-4 mr-2" />
-        Settings
+        {t("settings")}
       </Link>
       <Link
         to="/respond"
@@ -122,8 +126,9 @@ function NavigationLinks({ className }: { className: string }) {
         } ${className}`}
       >
         <FileText className="w-4 h-4 mr-2" />
-        Respond
+        {t("respond")}
       </Link>
+      <LanguageSwitcher />
     </>
   );
 }

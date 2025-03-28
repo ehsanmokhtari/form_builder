@@ -12,6 +12,7 @@ import { supabase } from "../lib/supabase";
 import { useNavigate, useLocation } from "react-router-dom";
 import FormPreview from "./FormPreview";
 import CustomDialog from "./CustomDialog";
+import { useLanguage } from "../contexts/LanguageContext";
 
 const FormBuilder = () => {
   const {
@@ -27,6 +28,7 @@ const FormBuilder = () => {
     clearForm,
     addField,
   } = useFormStore();
+  const { t } = useLanguage();
 
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -62,7 +64,7 @@ const FormBuilder = () => {
 
   const handleSave = async () => {
     if (!title.trim()) {
-      setError("Please enter a form title");
+      setError(t("pleaseEnterTitle"));
       return;
     }
 
@@ -106,11 +108,7 @@ const FormBuilder = () => {
       navigate("/settings");
     } catch (err) {
       console.error("Error saving form:", err);
-      setError(
-        err instanceof Error
-          ? err.message
-          : "Failed to save form. Please try again."
-      );
+      setError(err instanceof Error ? err.message : t("failedToSave"));
     } finally {
       setSaving(false);
       clearForm();
@@ -121,7 +119,7 @@ const FormBuilder = () => {
     <div className="space-y-6">
       <div className="flex gap-2 justify-between items-center">
         <h2 className="text-2xl font-bold text-gray-900 text-center">
-          {formId ? "Edit Form" : "Create Form"}
+          {formId ? t("editForm") : t("createForm")}
         </h2>
         <div className="flex flex-wrap items-center justify-center gap-2">
           <button
@@ -131,12 +129,12 @@ const FormBuilder = () => {
             {showPreview ? (
               <>
                 <EyeOff className="w-4 h-4 mr-2" />
-                Hide Preview
+                {t("hidePreview")}
               </>
             ) : (
               <>
                 <Eye className="w-4 h-4 mr-2" />
-                Show Preview
+                {t("showPreview")}
               </>
             )}
           </button>
@@ -150,7 +148,7 @@ const FormBuilder = () => {
                 className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
               >
                 <Copy className="w-4 h-4 mr-2" />
-                Save as New
+                {t("saveAsNew")}
               </button>
               <button
                 onClick={() => {
@@ -161,7 +159,7 @@ const FormBuilder = () => {
                 className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-orange-600 hover:bg-orange-700 disabled:opacity-50"
               >
                 <SquareX className="w-4 h-4 mr-2" />
-                Cancel Update
+                {t("cancelUpdate")}
               </button>
             </>
           )}
@@ -174,7 +172,7 @@ const FormBuilder = () => {
             className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50"
           >
             <Save className="w-4 h-4 mr-2" />
-            {saving ? "Saving..." : formId ? "Update Form" : "Save Form"}
+            {saving ? t("saving") : formId ? t("updateForm") : t("saveForm")}
           </button>
         </div>
       </div>
@@ -210,7 +208,7 @@ const FormBuilder = () => {
                 htmlFor="title"
                 className="block text-sm font-medium text-gray-700"
               >
-                Form Title
+                {t("formTitle")}
               </label>
               <input
                 type="text"
@@ -218,7 +216,7 @@ const FormBuilder = () => {
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                placeholder="Enter form title"
+                placeholder={t("enterFormTitle")}
               />
             </div>
 
@@ -227,7 +225,7 @@ const FormBuilder = () => {
                 htmlFor="description"
                 className="block text-sm font-medium text-gray-700"
               >
-                Description (optional)
+                {t("descriptionOptional")}
               </label>
               <textarea
                 id="description"
@@ -235,12 +233,12 @@ const FormBuilder = () => {
                 onChange={(e) => setDescription(e.target.value)}
                 rows={3}
                 className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                placeholder="Enter form description"
+                placeholder={t("enterFormDescription")}
               />
             </div>
           </div>
 
-          <div className="flex justify-end space-x-2">
+          <div className="flex justify-end gap-2">
             <button
               onClick={() =>
                 addField({
@@ -252,7 +250,7 @@ const FormBuilder = () => {
               className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
             >
               <Plus className="w-4 h-4 mr-2" />
-              Add Text
+              {t("addText")}
             </button>
             <button
               onClick={() =>
@@ -268,7 +266,7 @@ const FormBuilder = () => {
               className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
             >
               <Plus className="w-4 h-4 mr-2" />
-              Add Question
+              {t("addQuestion")}
             </button>
           </div>
 
@@ -290,9 +288,7 @@ const FormBuilder = () => {
 
           {fields.length === 0 && (
             <div className="text-center py-12">
-              <p className="text-gray-500">
-                No fields added yet. Start by adding a text or question field.
-              </p>
+              <p className="text-gray-500">{t("noFieldsAdded")}</p>
             </div>
           )}
         </div>
@@ -301,7 +297,7 @@ const FormBuilder = () => {
           <div className="border-l pl-6">
             <div className="sticky top-6">
               <h3 className="text-lg font-medium text-gray-900 mb-4">
-                Form Preview
+                {t("formPreview")}
               </h3>
               <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-6">
                 <FormPreview
@@ -318,14 +314,18 @@ const FormBuilder = () => {
       <CustomDialog
         isOpen={dialogOpen}
         title={
-          saveAsNew ? "Save as New Form" : formId ? "Update Form" : "Save Form"
+          saveAsNew
+            ? t("saveAsNewForm")
+            : formId
+            ? t("updateForm")
+            : t("saveForm")
         }
         message={
           saveAsNew
-            ? "Do you want to save this as a new form?"
+            ? t("doSaveAsNew")
             : formId
-            ? "Do you want to update the existing form?"
-            : "Do you want to save this form?"
+            ? t("doUpdateForm")
+            : t("doSaveForm")
         }
         onConfirm={() => {
           handleSave();

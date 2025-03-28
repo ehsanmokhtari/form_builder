@@ -5,6 +5,7 @@ import { LucideMove, Trash2, BarChart3, Copy } from "lucide-react";
 import { FormField as FormFieldType } from "../types/form";
 import { useFormStore } from "../store/formStore";
 import CustomDialog from "./CustomDialog";
+import { useLanguage } from "../contexts/LanguageContext";
 
 interface FormFieldProps {
   field: FormFieldType;
@@ -13,6 +14,7 @@ interface FormFieldProps {
 const FormField: React.FC<FormFieldProps> = ({ field }) => {
   const { updateField, removeField, addField } = useFormStore();
   const [dialogOpen, setDialogOpen] = useState(false);
+  const { t } = useLanguage();
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: field.id });
 
@@ -93,9 +95,9 @@ const FormField: React.FC<FormFieldProps> = ({ field }) => {
               }
               className="p-2 border border-gray-300 rounded-md"
             >
-              <option value={12}>Full Width</option>
-              <option value={6}>Half Width</option>
-              <option value={4}>Third Width</option>
+              <option value={12}>{t("fullWidth")}</option>
+              <option value={6}>{t("halfWidth")}</option>
+              <option value={4}>{t("thirdWidth")}</option>
             </select>
           </div>
         </div>
@@ -108,25 +110,28 @@ const FormField: React.FC<FormFieldProps> = ({ field }) => {
                 updateField(field.id, { content: e.target.value })
               }
               className="w-full p-2 border border-gray-300 rounded-md"
-              placeholder="Enter text content..."
+              placeholder={t("enterTextContent")}
             />
           ) : (
             <div className="space-y-4">
               <div className="flex items-center gap-4 flex-wrap">
-                <select
-                  value={field.questionType}
-                  onChange={(e) =>
-                    updateField(field.id, {
-                      questionType: e.target
-                        .value as FormFieldType["questionType"],
-                    })
-                  }
-                  className="p-2 border border-gray-300 rounded-md"
-                >
-                  <option value="descriptive">Descriptive</option>
-                  <option value="single">Single Choice</option>
-                  <option value="multiple">Multiple Choice</option>
-                </select>
+                <label className="flex items-center gap-2">
+                  {t("questionType")}
+                  <select
+                    value={field.questionType}
+                    onChange={(e) =>
+                      updateField(field.id, {
+                        questionType: e.target
+                          .value as FormFieldType["questionType"],
+                      })
+                    }
+                    className="p-2 border border-gray-300 rounded-md"
+                  >
+                    <option value="descriptive">{t("descriptive")}</option>
+                    <option value="single">{t("singleChoice")}</option>
+                    <option value="multiple">{t("multipleChoice")}</option>
+                  </select>
+                </label>
 
                 {field.questionType === "descriptive" && (
                   <label className="flex items-center gap-2">
@@ -140,7 +145,7 @@ const FormField: React.FC<FormFieldProps> = ({ field }) => {
                       }
                       className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
                     />
-                    Multi-line
+                    {t("multiLine")}
                   </label>
                 )}
 
@@ -153,13 +158,13 @@ const FormField: React.FC<FormFieldProps> = ({ field }) => {
                     }
                     className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
                   />
-                  Required
+                  {t("required")}
                 </label>
               </div>
 
               <div className="flex items-center flex-wrap gap-4 mt-2">
                 <label className="flex items-center gap-2">
-                  Answer Placement:
+                  {t("answerPlacement")}
                   <select
                     value={field.answerPlacement}
                     onChange={(e) =>
@@ -169,15 +174,15 @@ const FormField: React.FC<FormFieldProps> = ({ field }) => {
                     }
                     className="p-2 border border-gray-300 rounded-md"
                   >
-                    <option value="front">In Front</option>
-                    <option value="below">Below</option>
+                    <option value="front">{t("front")}</option>
+                    <option value="below">{t("below")}</option>
                   </select>
                 </label>
 
                 {(field.questionType === "single" ||
                   field.questionType === "multiple") && (
                   <label className="flex items-center gap-2">
-                    Option Layout:
+                    {t("optionLayout")}
                     <select
                       value={field.optionLayout}
                       onChange={(e) =>
@@ -187,8 +192,8 @@ const FormField: React.FC<FormFieldProps> = ({ field }) => {
                       }
                       className="p-2 border border-gray-300 rounded-md"
                     >
-                      <option value="row">Row</option>
-                      <option value="column">Column</option>
+                      <option value="row">{t("row")}</option>
+                      <option value="column">{t("column")}</option>
                     </select>
                   </label>
                 )}
@@ -206,9 +211,11 @@ const FormField: React.FC<FormFieldProps> = ({ field }) => {
                   onChange={(e) =>
                     updateField(field.id, { content: e.target.value })
                   }
-                  style={{ width: `${(inputWidth >= 370 ? 370 : inputWidth)  || 100}px` }}
+                  style={{
+                    width: `${(inputWidth >= 370 ? 370 : inputWidth) || 100}px`,
+                  }}
                   className="p-2 border border-gray-300 rounded-md h-fit min-w-[140px]"
-                  placeholder="Enter question..."
+                  placeholder={t("enterQuestionText")}
                 />
 
                 {(field.questionType === "single" ||
@@ -242,8 +249,8 @@ const FormField: React.FC<FormFieldProps> = ({ field }) => {
                             setOptionWidths(newWidths);
                           }}
                           style={{ width: `${optionWidths[index] || 100}px` }}
-                          className="flex p-2 border border-gray-300 rounded-md min-w-[80px]"
-                          placeholder={`Option ${index + 1}`}
+                          className="flex p-2 border border-gray-300 rounded-md min-w-[100px]"
+                          placeholder={t("enterOptionText")}
                         />
                         <button
                           onClick={() => {
@@ -271,7 +278,7 @@ const FormField: React.FC<FormFieldProps> = ({ field }) => {
                   }}
                   className="text-sm text-purple-600 hover:text-purple-700"
                 >
-                  + Add Option
+                  {t("addOption")}
                 </button>
               )}
             </div>
@@ -290,7 +297,7 @@ const FormField: React.FC<FormFieldProps> = ({ field }) => {
               className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
             />
             <BarChart3 className="w-4 h-4 text-gray-500" />
-            Include in Summary
+            {t("showInSummary")}
           </label>
         )}
       </div>

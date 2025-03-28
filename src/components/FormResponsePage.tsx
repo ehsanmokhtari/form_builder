@@ -2,8 +2,10 @@ import { useState, useEffect } from "react";
 import { supabase } from "../lib/supabase";
 import type { Form, FormField } from "../types/form";
 import CustomDialog from "./CustomDialog";
+import { useLanguage } from "../contexts/LanguageContext";
 
 const FormResponsePage = () => {
+  const { t } = useLanguage();
   const [forms, setForms] = useState<Form[]>([]);
   const [selectedForm, setSelectedForm] = useState<Form | null>(null);
   const [responses, setResponses] = useState<Record<string, string | string[]>>(
@@ -55,11 +57,17 @@ const FormResponsePage = () => {
             (Array.isArray(responses[field.id]) &&
               responses[field.id].length === 0))
       )
-      .map((field) => field.content);
+      .map((field) =>
+        field.content.length > 20
+          ? field.content.slice(0, 20) + " ..."
+          : field.content
+      );
 
     if (missingFields.length > 0) {
       setDialogMessage(
-        `Please fill out the required fields: ${missingFields.join(", ")}`
+        `${t("pleaseFillRequired")} (${missingFields.length} ${t(
+          "fields"
+        )}): \n- ${missingFields.join("\n-  ")}`
       );
       setDialogOpen(true);
       return;
@@ -72,7 +80,7 @@ const FormResponsePage = () => {
       });
 
       if (error) throw error;
-      setDialogMessage("Response submitted successfully!");
+      setDialogMessage(t("responseSubmitted"));
       setDialogOpen(true);
     } catch (error) {
       console.error("Error submitting response:", error);
@@ -92,10 +100,10 @@ const FormResponsePage = () => {
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-8">
           <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
-            Respond to a Form
+            {t("respondToForm")}
           </h2>
           <p className="mt-3 text-xl text-gray-500 sm:mt-4">
-            Select a form and share your responses
+            {t("selectFormAndRespond")}
           </p>
         </div>
 
@@ -104,7 +112,7 @@ const FormResponsePage = () => {
             onChange={(e) => handleFormSelect(e.target.value)}
             className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-purple-500 focus:border-purple-500 bg-white"
           >
-            <option value="">Select a form</option>
+            <option value="">{t("selectForm")}</option>
             {forms.map((form) => (
               <option key={form.id} value={form.id}>
                 {form.title}
@@ -163,7 +171,7 @@ const FormResponsePage = () => {
                                       e.target.value
                                     )
                                   }
-                                  placeholder="Enter your response..."
+                                  placeholder={t("enterAnswer")}
                                 />
                               ) : (
                                 <input
@@ -175,7 +183,7 @@ const FormResponsePage = () => {
                                       e.target.value
                                     )
                                   }
-                                  placeholder="Enter your response..."
+                                  placeholder={t("enterAnswer")}
                                 />
                               )
                             ) : (
@@ -226,7 +234,7 @@ const FormResponsePage = () => {
                                         }
                                       }}
                                     />
-                                    <label className="ml-3 text-sm text-gray-700">
+                                    <label className="ms-3 text-sm text-gray-700">
                                       {option}
                                     </label>
                                   </div>
@@ -244,7 +252,7 @@ const FormResponsePage = () => {
                   onClick={handleSubmit}
                   className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-colors duration-200"
                 >
-                  Submit Response
+                  {t("submitResponse")}
                 </button>
               </div>
             </div>
@@ -253,7 +261,7 @@ const FormResponsePage = () => {
       </div>
       <CustomDialog
         isOpen={dialogOpen}
-        title="Missing Fields"
+        title={t("notification")}
         message={dialogMessage}
         onConfirm={() => setDialogOpen(false)}
       />
