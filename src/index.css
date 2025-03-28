@@ -1,3 +1,45 @@
+/* Import Shabnam font for Persian language */
+@import url("https://cdn.jsdelivr.net/gh/rastikerdar/shabnam-font@v5.0.1/dist/font-face.css");
+
+/* Tailwind CSS directives - these are processed by the Tailwind CSS processor */
+/* These directives inject Tailwind's base, component, and utility styles */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  /* Default styles for English (LTR) */
+  :root {
+    --font-family: "Inter", system-ui, sans-serif;
+  }
+
+  /* Styles for Persian (RTL) */
+  html[dir="rtl"] {
+    --font-family: "Shabnam", system-ui, sans-serif;
+  }
+
+  body {
+    font-family: var(--font-family);
+  }
+
+  /* RTL specific adjustments */
+  html[dir="rtl"] .mr-2 {
+    margin-right: 0;
+    margin-left: 0.5rem;
+  }
+
+  html[dir="rtl"] .ml-2 {
+    margin-left: 0;
+    margin-right: 0.5rem;
+  }
+
+  /* Fix icon directions in RTL mode */
+  html[dir="rtl"] svg {
+    transform: scaleX(-1);
+  }
+
+  /* Don't flip language switcher icon */
+  html[dir="rtl"] .language-switcher svg {
+    transform: none;
+  }
+}

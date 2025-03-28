@@ -4,57 +4,57 @@ export type Json =
   | boolean
   | null
   | { [key: string]: Json | undefined }
-  | Json[]
+  | Json[];
 
 export interface Database {
   public: {
     Tables: {
       forms: {
         Row: {
-          id: string
-          title: string
-          description: string | null
-          fields: Json
-          created_at: string
-          updated_at: string
-        }
+          id: string;
+          title: string;
+          description: string | null;
+          fields: Json;
+          created_at: string;
+          updated_at: string;
+        };
         Insert: {
-          id?: string
-          title: string
-          description?: string | null
-          fields?: Json
-          created_at?: string
-          updated_at?: string
-        }
+          id?: string;
+          title: string;
+          description?: string | null;
+          fields?: Json;
+          created_at?: string;
+          updated_at?: string;
+        };
         Update: {
-          id?: string
-          title?: string
-          description?: string | null
-          fields?: Json
-          created_at?: string
-          updated_at?: string
-        }
-      }
+          id?: string;
+          title?: string;
+          description?: string | null;
+          fields?: Json;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
       form_responses: {
         Row: {
-          id: string
-          form_id: string
-          responses: Json
-          created_at: string
-        }
+          id: string;
+          form_id: string;
+          responses: Json;
+          created_at: string;
+        };
         Insert: {
-          id?: string
-          form_id: string
-          responses: Json
-          created_at?: string
-        }
+          id?: string;
+          form_id: string;
+          responses: Json;
+          created_at?: string;
+        };
         Update: {
-          id?: string
-          form_id?: string
-          responses?: Json
-          created_at?: string
-        }
-      }
-    }
-  }
+          id?: string;
+          form_id?: string;
+          responses?: Json;
+          created_at?: string;
+        };
+      };
+    };
+  };
 }
