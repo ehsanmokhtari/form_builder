@@ -69,22 +69,6 @@ The application uses Supabase as its backend. To set up the database:
 1. Create a new Supabase project
 2. Run the migration script located in `supabase/migrations/merged_migration.sql`
 
-## Project Structure
-
-form-builder/
-├── src/
-│   ├── components/       # React components
-│   ├── contexts/         # Context providers (Language)
-│   ├── lib/              # Utility functions and services
-│   ├── store/            # Zustand state management
-│   ├── types/            # TypeScript type definitions
-│   ├── App.tsx           # Main application component
-│   └── main.tsx          # Application entry point
-├── supabase/
-│   └── migrations/       # Database migration scripts
-├── .env.example          # Example environment variables
-└── package.json          # Project dependencies
-
 ## Features
 ### Form Builder
 - Create forms with customizable fields
