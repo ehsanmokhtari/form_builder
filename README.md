@@ -3,8 +3,8 @@
 A dynamic form builder application built with React, TypeScript, and Supabase. Create, customize, and manage forms with a drag-and-drop interface, collect responses, and view submissions.
 
 <p align="left">
-  <a href="https://github.com/your-username/form_builder/actions"><img alt="CI" src="https://img.shields.io/github/actions/workflow/status/your-username/form_builder/ci.yml?branch=main"></a>
-  <a href="https://github.com/your-username/form_builder/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
+  <a href="https://github.com/ehsanmokhtari/form_builder/actions"><img alt="CI" src="https://img.shields.io/github/actions/workflow/status/ehsanmokhtari/form_builder/ci.yml?branch=main"></a>
+  <a href="https://github.com/ehsanmokhtari/form_builder/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
 </p>
 
 ## Features
@@ -39,7 +39,7 @@ A dynamic form builder application built with React, TypeScript, and Supabase. C
 1. Clone the repository
 
 ```bash
-git clone https://github.com/your-username/form_builder.git
+git clone https://github.com/ehsanmokhtari/form_builder.git
 cd form_builder
 ```
 

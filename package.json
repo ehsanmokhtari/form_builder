@@ -1,17 +1,17 @@
 {
-  "name": "@your-username/form-builder",
+  "name": "@ehsanmokhtari/form-builder",
   "private": false,
   "version": "0.1.0",
   "description": "A dynamic form builder built with React, TypeScript, Vite, and Supabase.",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/your-username/form_builder.git"
+    "url": "git+https://github.com/ehsanmokhtari/form_builder.git"
   },
   "bugs": {
-    "url": "https://github.com/your-username/form_builder/issues"
+    "url": "https://github.com/ehsanmokhtari/form_builder/issues"
   },
-  "homepage": "https://github.com/your-username/form_builder#readme",
+  "homepage": "https://github.com/ehsanmokhtari/form_builder#readme",
   "type": "module",
   "scripts": {
     "dev": "vite",
