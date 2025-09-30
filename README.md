@@ -2,6 +2,11 @@
 
 A dynamic form builder application built with React, TypeScript, and Supabase. Create, customize, and manage forms with a drag-and-drop interface, collect responses, and view submissions.
 
+<p align="left">
+  <a href="https://github.com/your-username/form_builder/actions"><img alt="CI" src="https://img.shields.io/github/actions/workflow/status/your-username/form_builder/ci.yml?branch=main"></a>
+  <a href="https://github.com/your-username/form_builder/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
+</p>
+
 ## Features
 
 - **Drag-and-Drop Form Builder**: Create custom forms with various field types
@@ -25,7 +30,7 @@ A dynamic form builder application built with React, TypeScript, and Supabase. C
 
 ### Prerequisites
 
-- Node.js (v16 or higher)
+- Node.js (v18 or higher)
 - npm or yarn
 - Supabase account
 
@@ -34,14 +39,14 @@ A dynamic form builder application built with React, TypeScript, and Supabase. C
 1. Clone the repository
 
 ```bash
-git clone https://github.com/yourusername/form-builder.git
-cd form-builder
+git clone https://github.com/your-username/form_builder.git
+cd form_builder
 ```
 
 2. Install dependencies
 
 ```bash
-npm install
+npm ci
 ```
 
 3. Set up environment variables
@@ -49,10 +54,13 @@ npm install
 Copy the `.env.example` file to `.env` and fill in your Supabase credentials:
 
 ```bash
+# Windows (PowerShell)
 copy .env.example .env
+# macOS/Linux
+cp .env.example .env
 ```
 
-Edit the `.env` file with your Supabase URL and anonymous key.
+Then edit `.env` with your Supabase URL and anonymous key.
 
 4. Run the development server
 
@@ -60,7 +68,7 @@ Edit the `.env` file with your Supabase URL and anonymous key.
 npm run dev
 ```
 
-5. Open [http://localhost:5173](http://localhost:5173) in your browser
+5. Open http://localhost:5173 in your browser
 
 ### Database Setup
 
@@ -69,36 +77,21 @@ The application uses Supabase as its backend. To set up the database:
 1. Create a new Supabase project
 2. Run the migration script located in `supabase/migrations/merged_migration.sql`
 
-## Features
-### Form Builder
-- Create forms with customizable fields
-- Drag and drop to reorder fields
-- Set field properties (required, width, etc.)
-- Preview forms in real-time
-### Form Fields
-- Text fields
-- Questions with multiple choice, single choice, or descriptive answers
-- Customizable field width and layout
-### Form Responses
-- Collect and view form submissions
-- Secure access to responses
-### Internationalization
-- Support for English and Persian languages
-- Easy language switching
 ## Scripts
-- npm run dev : Start development server
-- npm run build : Build for production
-- npm run preview : Preview production build
-- npm run lint : Run ESLint
-- npm run format : Format code with Prettier
-- npm run db:migrate : Run database migrations
-- npm run db:reset : Reset database (use with caution)
+- `npm run dev`: Start development server
+- `npm run build`: Build for production
+- `npm run preview`: Preview production build
+- `npm run lint`: Run ESLint
+- `npm run format`: Format code with Prettier
 
 ## Contributing
-Contributions are welcome! Please feel free to submit a Pull Request.
+See [`CONTRIBUTING.md`](CONTRIBUTING.md). Please open an issue before large changes. All contributions must pass CI.
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+## Security
+See [`SECURITY.md`](SECURITY.md). Please do not file public issues for vulnerabilities.
+
+## Code of Conduct
+See [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md).
+
+## License
+Released under the MIT License. See [`LICENSE`](LICENSE) for details.
